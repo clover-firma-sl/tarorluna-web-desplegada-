@@ -1,0 +1,14 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { ArrowRight, AtSign, Check, ExternalLink, MoonStar } from "lucide-react";
+import { SiteShell } from "@/components/site-shell";
+import { categories, type CategoryKey } from "@/lib/site-content";
+
+export default async function SectionPage({ params }: { params: Promise<{ section: string }> }) {
+  const { section } = await params;
+  if (section === "quienes-somos") return <SiteShell><main className="inner-page"><section className="about-panel"><div className="portrait-placeholder"><MoonStar /><span>Tarot Luna</span></div><div><p className="eyebrow">Quiénes somos</p><h1>Una consulta humana, cercana y confidencial</h1><p>Tarot Luna nace para ofrecer un espacio tranquilo donde puedas compartir tus dudas y recibir una lectura personalizada, sin juicios y con total discreción.</p><p>Cada consulta es realizada personalmente por la tarotista. La tecnología ayuda con la reserva y la organización, pero nunca sustituye la interpretación humana.</p><Link className="primary-button" href="/reservar">Reservar consulta <ArrowRight /></Link></div></section></main></SiteShell>;
+  if (section === "redes-sociales") return <SiteShell><main className="inner-page social-page"><section className="section-heading"><p className="eyebrow">Síguenos</p><h1>Redes sociales de Tarot Luna</h1><p>Accede directamente a los perfiles oficiales de Tarot Luna.</p></section><section className="social-cards"><a href="https://www.tiktok.com/@tarotlunaaa4" target="_blank" rel="noreferrer"><span className="social-network-icon">♪</span><div><small>TikTok</small><strong>@tarotlunaaa4</strong></div><ExternalLink /></a><a href="https://www.instagram.com/tarot_lunaaaa/" target="_blank" rel="noreferrer"><span className="social-network-icon"><AtSign /></span><div><small>Instagram</small><strong>@tarot_lunaaaa</strong></div><ExternalLink /></a></section></main></SiteShell>;
+  const category = categories[section as CategoryKey]; if (!category) notFound(); const Icon = category.icon;
+  return <SiteShell><main className="inner-page"><section className="category-hero"><span className="large-icon"><Icon /></span><p className="eyebrow">{category.eyebrow}</p><h1>{category.title}</h1><p>{category.description}</p></section><section className="consultation-panel"><div><p className="eyebrow">Tu consulta puede incluir</p><h2>Una lectura adaptada a tu situación</h2><ul>{category.topics.map((topic) => <li key={topic}><Check />{topic}</li>)}</ul></div><div className="duration-card"><span>Dos formatos disponibles</span><strong>30 o 60 minutos</strong><p>Elige la duración que mejor se adapte a lo que necesitas.</p><Link className="primary-button" href={`/reservar?consulta=${section}`}>Reservar esta consulta <ArrowRight /></Link></div></section></main></SiteShell>;
+}
+
