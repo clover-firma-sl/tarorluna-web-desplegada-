@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { CalendarDays, CheckCircle2, CreditCard, Mail, MessageCircle } from "lucide-react";
 
@@ -13,7 +13,7 @@ function minimumDateValue() {
 export function ReservationForm() {
   const params = useSearchParams();
   const initialCategory = params.get("consulta") ?? "general";
-  const minimumDate = useMemo(minimumDateValue, []);
+  const [minimumDate] = useState(() => minimumDateValue());
   const [date, setDate] = useState(minimumDate);
   const [duration, setDuration] = useState("30");
   const [slots, setSlots] = useState<string[]>([]);
@@ -25,12 +25,23 @@ export function ReservationForm() {
 
   useEffect(() => {
     const controller = new AbortController();
-    setLoadingSlots(true); setSelectedTime("");
     fetch(`/api/reservas?date=${encodeURIComponent(date)}&duration=${duration}`, { signal: controller.signal })
       .then((response) => response.json()).then((result: { slots?: string[] }) => setSlots(result.slots ?? []))
       .catch((error) => { if (error.name !== "AbortError") setSlots([]); }).finally(() => setLoadingSlots(false));
     return () => controller.abort();
   }, [date, duration]);
+
+  function changeDate(value: string) {
+    setLoadingSlots(true);
+    setSelectedTime("");
+    setDate(value);
+  }
+
+  function changeDuration(value: string) {
+    setLoadingSlots(true);
+    setSelectedTime("");
+    setDuration(value);
+  }
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault(); setStatus("sending"); setMessage("");
@@ -50,10 +61,10 @@ export function ReservationForm() {
   return <form className="reservation-form" onSubmit={submit}>
     <div className="form-section"><div className="form-section-title"><span>1</span><div><h2>Elige tu consulta</h2><p>Selecciona el área y la duración.</p></div></div><div className="form-grid">
       <label>Tipo de consulta<select name="category" defaultValue={initialCategory} required>{Object.entries(categoryLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
-      <label>Duración y precio<select name="duration" value={duration} onChange={(event) => setDuration(event.target.value)} required><option value="10">10 minutos — 10 € (exprés)</option><option value="30">30 minutos — 25 €</option><option value="60">60 minutos — 50 €</option></select></label>
+      <label>Duración y precio<select name="duration" value={duration} onChange={(event) => changeDuration(event.target.value)} required><option value="10">10 minutos — 10 € (exprés)</option><option value="30">30 minutos — 25 €</option><option value="60">60 minutos — 50 €</option></select></label>
     </div></div>
     <div className="form-section"><div className="form-section-title"><span>2</span><div><h2>Elige día y hora</h2><p>Solo aparecen las franjas disponibles. Las reservas requieren al menos 24 horas de antelación.</p></div></div>
-      <label className="date-field">Fecha<input type="date" name="date" min={minimumDate} value={date} onChange={(event) => setDate(event.target.value)} required /></label>
+      <label className="date-field">Fecha<input type="date" name="date" min={minimumDate} value={date} onChange={(event) => changeDate(event.target.value)} required /></label>
       <input type="hidden" name="time" value={selectedTime} />
       <div className="slot-picker" aria-live="polite">
         {loadingSlots ? <p>Consultando disponibilidad…</p> : slots.length ? slots.map((slot) => <button type="button" key={slot} className={selectedTime === slot ? "slot-button selected" : "slot-button"} onClick={() => setSelectedTime(slot)}>{slot}</button>) : <p>No quedan horas disponibles para este día.</p>}
@@ -68,4 +79,3 @@ export function ReservationForm() {
     <p className="form-help"><MessageCircle /> WhatsApp Business se activará al añadir el número de empresa.</p>
   </form>;
 }
-

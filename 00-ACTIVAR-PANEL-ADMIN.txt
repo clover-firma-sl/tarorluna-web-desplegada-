@@ -1,0 +1,27 @@
+TAROT LUNA — ACTIVAR EL PANEL PRIVADO DE ADMINISTRACIÓN
+
+1. En Supabase abre: Authentication > Users > Add user > Create new user.
+2. Correo: lunatarotista211@gmail.com
+3. Crea una contraseña exclusiva y robusta (mínimo 16 caracteres).
+4. Activa "Auto confirm user" para confirmar el correo de empresa.
+5. En Vercel abre: tarot-luna-empresa > Settings > Environment Variables.
+6. Añade:
+   ADMIN_EMAIL = lunatarotista211@gmail.com
+   para Production y Preview.
+7. Conserva las variables ya existentes:
+   SUPABASE_URL
+   SUPABASE_SERVICE_ROLE_KEY
+8. Despliega esta versión y abre la ruta privada:
+   /administracion/acceso
+
+SEGURIDAD
+- La contraseña no se guarda en GitHub ni en Vercel: Supabase Auth la almacena cifrada.
+- La sesión usa una cookie HttpOnly, Secure y SameSite=Strict y caduca en una hora.
+- Solo se autoriza el correo empresarial configurado.
+- El panel no aparece en menús y solicita a buscadores que no lo indexen.
+- Nunca compartas contraseñas, claves secretas ni códigos de verificación.
+
+SIGUIENTE ENDURECIMIENTO
+- Activar TOTP/2FA para el usuario empresarial.
+- Añadir recuperación segura de contraseña.
+- Añadir acciones auditadas para confirmar, cancelar y reembolsar citas.
