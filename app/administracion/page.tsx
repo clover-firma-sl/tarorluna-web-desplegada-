@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { CalendarDays, Clock3, Euro, ShieldCheck, UserRound } from "lucide-react";
 import { AdminLogoutButton } from "@/components/admin-logout-button";
+import { AdminReservationActions } from "@/components/admin-reservation-actions";
 import { getAdminUser } from "@/lib/admin-auth";
 import { getAdminReservations } from "@/lib/admin-reservations";
 
@@ -55,6 +56,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
         </div>
         <div className="admin-contact"><span><UserRound /> {item.email}</span><span>{item.phone}</span></div>
         {item.notes && <p className="admin-notes">{item.notes}</p>}
+        <AdminReservationActions reservationKey={item.reservation_key} status={item.status} />
         <footer><span>Solicitud #{item.id}</span><span>{item.payment_order ? `Pedido ${item.payment_order}` : "Sin referencia de pago"}</span></footer>
       </article>)}
     </section>

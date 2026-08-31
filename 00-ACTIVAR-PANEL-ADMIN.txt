@@ -24,4 +24,11 @@ SEGURIDAD
 SIGUIENTE ENDURECIMIENTO
 - Activar TOTP/2FA para el usuario empresarial.
 - Añadir recuperación segura de contraseña.
-- Añadir acciones auditadas para confirmar, cancelar y reembolsar citas.
+- Añadir el flujo bancario automático de Redsys/Bizum y los reembolsos.
+
+ACCIONES DE GESTIÓN
+- Ejecuta supabase-admin-actions.sql una sola vez en Supabase > SQL Editor.
+- Confirmar pago bloquea definitivamente los intervalos de la cita.
+- Cancelar libera todos sus intervalos.
+- Eliminar solo está disponible para solicitudes pendientes, fallidas o canceladas.
+- Las operaciones importantes quedan registradas en audit_log.
